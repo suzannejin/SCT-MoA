@@ -1,0 +1,9 @@
+file network species
+1 data/networks/HIPPIE/human.txt.gz HIPPIE human
+2 data/networks/HIPPIE/mouse.txt.gz HIPPIE mouse
+3 data/networks/OmniPath/human.txt.gz OmniPath human
+4 data/networks/OmniPath/mouse.txt.gz OmniPath mouse
+5 data/networks/Reactome/human.txt.gz Reactome human
+6 data/networks/Reactome/mouse.txt.gz Reactome mouse
+7 data/networks/STRING/human.txt.gz STRING human
+8 data/networks/STRING/mouse.txt.gz STRING mouse

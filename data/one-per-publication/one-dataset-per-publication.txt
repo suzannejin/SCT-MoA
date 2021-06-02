@@ -1,0 +1,44 @@
+Dataset,Cells,Genes,Dropouts,PMID,Year,Species,Protocol,Data_processing,Cell_type,Cell_type_description,Conditions
+E-MTAB-2805,288,10527,0.310335592,25599176,2015,Mouse,SMARTer C1,counts,mESCs,Single mouse ESCs staged for the G1 G2M and S cell-cycle phases,G1 G2M and S cell-cycle phases
+E-MTAB-5061_gamma,197,8857,0.456091113,27667667,2016,Human,Smart-seq2,RPKM,gamma cells,Single human pancreatic islets gamma cells,Normal and type II diabetes mellitus
+GSE108097_Brain_4,88,708,0.607585388,29474909,2018,Mouse,Microwell-seq,counts,brain cells,Single mouse brain cells cluster 4 from Mouse Cell Atlas,Different brain cell clusters
+GSE51254,96,9507,0.347188256,24141493,2014,Human,SMARTer,FPKM,HCT116 cells,Single HCT116 cells,Only C1 microfluidics cells
+GSE52529,372,9448,0.424800037,24658644,2014,Human,SMARTer C1,FPKM,myoblasts,Single differentiating primary human myoblasts,Different time-course (0 24 48 72 h)
+GSE52583,198,6083,0.57777346,24739965,2014,Mouse,SMARTer C1,FPKM,lung alveolar epithelial cells,Single lung alveolar epithelial cells,Various developmental stages (E14.5 E16.5 E18.5 and adult)
+GSE59129,49,9442,0.335042299,25053437,2014,Mouse,SMARTer C1,nRPKM,metanephric mesenchyme cells,Single cells from the metanephric mesenchyme of E11.5 kidney,
+GSE59739,622,6140,0.519632477,25420068,2015,Mouse,STRT-seq,RPM,sensory neurons, single sensory neurons from the dorsal root ganglion,
+GSE60297,174,8865,0.484689889,25224068,2014,Mouse,SMART-seq C1,FPKM,medullary thymic epithelial cells,mouse medullary thymic epithelial cells,
+GSE60631_l2_S1PyrDL,81,7205,0.459615665,25700174,2015,Mouse,STRT-seq,counts,S1 pyramidal cells,single S1 pyramidal cells subclass DL from mouse cerebral cortex,Subclass obtained by clustering methods
+GSE60749_NPCs,54,9407,0.339741091,25471879,2014,Mouse,SMARTer C1,ln(TPM+1),neural precursor cells,mouse neural precursor cells,
+GSE60768_NSCs,41,2909,0.589398754,26040288,2015,Mouse,BAT-seq,counts,neural progenitor cells,ES-derived mouse neural progenitor cells,
+GSE62270,672,3830,0.632364712,26287467,2015,Mouse,CEL-Seq,counts,intestinal organoid cells,single cells isolated from mouse intestinal organoids,They used wild-type C57BL/6 mouse a Reg4-dsRed-knock-in mouse and an Lgr5-GFP-DTR mouse
+GSE63472_c29,591,1222,0.661864686,26000488,2015,Mouse,Drop-seq,counts,retina cells,single cells from mouse retinas,
+GSE63818,233,9177,0.347800833,26046443,2015,Mouse,Tang,FPKM,primordial germ cells,single primordial germ cells,Obtained from human embryos at different weeks of gestation
+GSE64960,68,6149,0.529818335,25683803,2015,Mouse,SMARTer C1,counts,gonad cells,single differentiating cells from the mouse gonad,
+GSE65525,239,9541,0.467782076,26000487,2015,Human,inDrop,counts,K562 cells,single K562 cells,
+GSE67835_astrocytes,62,7053,0.515077089,26060301,2015,Human,SMARTer C1,counts,astrocytes,human astrocytes,
+GSE67980,122,7504,0.549777823,26383955,2015,Human,,counts,prostate cancer circulating tumor cells,single prostate cancer circulating tumor cells (CTC),Includes both lineage-confirmed and candidate PCa CTC
+GSE69761,148,9352,0.424049343,26130332,2015,Mouse,,FPKM,E16.5 lung cells,mouse E16.5 lung cells,
+GSE70580,574,4043,0.594795409,26878113,2016,Human,Smart-seq2,counts,tonsil innate lymphoid cells,tonsil innate lymphoid cells,From three independent donors
+GSE70844,83,3560,0.626739542,26689544,2016,Mouse,,counts,cortical neurons,single cortical neurons sequenced after patch-clamp recording,
+GSE71315,226,3821,0.601364606,27081004,2016,Human,SMARTer C1,counts,neocortex cells,single cells from the developing human neocortex,
+GSE71485,168,8211,0.493411133,26299571,2015,Mouse,SMART-seq,TPM,hippocampal quiescet neural stem cells,single hippocampal quiescent neural stem cells,
+GSE71585_l2_Vip-Chat,46,8603,0.374399224,26727548,2016,Mouse,SMARTer,counts,Vip-Chat cells,vasoactive intestinal polypeptide (Vip) neurons from the primary visual cortex,cell type classification annotated through transcriptome profiling (the Allen Brain Atlas project)
+GSE71858,45,10778,0.260285355,26524239,2016,Human,Smart-seq2,counts,radial glial cells,radial glial cells,
+GSE71982,158,8602,0.428984722,26469390,2015,Mouse,SMARTer C1,counts,utricular and cochlear sensory epithelia cells,single cells from the utricular and cochlear sensory epithelia,
+GSE73121,118,8726,0.35952171,27139883,2016,Human,SMARTer C1,TPM,renal cell carcinoma,renal cell carcinoma,Both primary and metastatic tumor
+GSE74596,203,7108,0.430448173,27089380,2016,Mouse,Smart-seq2,counts,NKT cells,single mouse natural killer T cells,
+GSE74923_CD8,106,8725,0.346991404,26732280,2016,Mouse,Smart-seq2,counts,CD8+ T-cell,activated murine CD8+ T-cell,
+GSE75330_OPC,310,2188,0.650816772,27284195,2016,Mouse,STRT-seq,counts,OPC,mouse oligodendrocyte precursor cells,
+GSE76005,65,8587,0.409457946,26780092,2016,Mouse,STRT-seq,counts,NPC,embryonic mouse neural progenitor cells,
+GSE77847,96,7275,0.477906644,27016502,2016,Mouse,SMARTer C1,TPM,acute myeloid leukemia cells,single cells from a mouse model of acute myeloid leukemia,
+GSE81076,1728,3823,0.652309426,27345837,2016,Human,CEL-Seq,counts,pacreatic cells,single cells from human pancreas,Both patients with and without type 2 diabetes
+GSE81547_acinar,411,5163,0.55980769,28965763,2017,Human,Smart-seq2,counts,pancreatic acinar cells,human pancreatic acinar cells,Donors spanning six decades of life
+GSE81608_beta,472,7234,0.488106716,27667665,2016,Human,SMARTer C1,RPKM,pancreatic beta cells,human pancreatic beta cells,Both patients with and without type 2 diabetes
+GSE84133_human_ductal,1077,3735,0.587909546,27667365,2016,Human,inDrop,counts,pancreatic ductal cells,human pancreatic ductal cells,
+GSE85241_beta,448,7827,0.441503142,27693023,2016,Human,CEL-Seq2,normalized counts,pancreatic beta cells,human pancreatic beta cells,
+GSE87544_GABA15,112,4064,0.553661505,28355573,2017,Mouse,Drop-seq,log2(TPM+1),hypothalamus GABA15 cluster cells,single cells from the mouse hypothalamus - GABA15 cluster,Mourse kept in normal condition and food deprivation
+GSE99058,250,4954,0.59019782,29443965,2018,Mouse,Smart-seq2,normalized counts,astrocytes,single mouse astrocytes,
+GSM1676569,96,4005,0.572914066,26365489,2015,Human,CEL-Seq,counts,KMB7 cells,single KMB7 cells,
+Oligodendrocyte_precursor_cells,820,2001,0.646694945,30096314,2018,Mouse,Chromium,counts,OPC,mouse oligodendrocyte precursor cells,
+Zheng_naive_t,10479,2011,0.499638332,28091601,2017,Human,GemCode,counts,T cells,human T cells,

@@ -1,0 +1,21 @@
+Datasets:
+    (1) 43 datasets -> already preprocessed and filtered using the scripts in R folder:
+            - GEO and 10X Genomics datasets: exclude genes with 0 in >= 95% samples
+            - mousebrain.org datasets: include only the 2001 genes expressed in the largest number of cells
+    (2) In order to use these datasets for the main analysis, the GEO datasets should be further filtered, 
+        by excluding the genes with 0 in >= 80% samples
+
+
+You can find the additional information of these datasets in:
+- one-dataset-per-publication.txt
+    Cells, genes and dropout of the further filtered (described above) datasets
+    Information related to the study: PMID, year of publication, specie, sequencing protocol
+    The kind of expression values (counts, rpkm, fpkm, tpm, ...)
+    Cell type information
+    Study conditions
+- info1.csv
+    Information (cells, genes, dropout) related to the datasets filtered at step (1)
+- info80.csv
+    Information (cells, genes, dropout) related to the datasets further filtered at step (2)
+- get_info.R 
+    Script used to create the info1.csv and info2.csv files
