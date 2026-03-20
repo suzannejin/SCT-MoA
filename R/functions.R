@@ -34,20 +34,28 @@ clean_metric = function(vec) {
                           "Biweight midcorrelation" = "bicor",
                           "Cosine distance" = "cosine",
                           "Weighted rank correlation" = "weighted_rank",
-                          "ϕs" = "phi_s",
-                          "ρp" = "rho_p"
+                          "Mutual information" = "MI",
+                          "Proportionality phi" = "phi_s",
+                          "Proportionality rho" = "rho_p"
+  ))
+}
+clean_metric_recomputed = function(vec){
+  as.character(fct_recode(vec,
+                          "*Zero-inflated Kendall correlation" = "zi_kendallCLR",
+                          "*Spearman correlation" = "spearmanCLR",
+                          "*Pearson correlation" = "pearsonCLR"
   ))
 }
 
-get_children = function(term) {
-  library(MeSH.PCR.db)
-  # get term and children
-  terms = select(MeSH.PCR.db, keys = term, columns = c("PARENT", "CHILD"), 
-                 keytype = "PARENT")
-  # get CUI-MeSH map
-  map = read.delim("data/disease/phenopedia/CUI-MeSH-map.txt.gz")
-  # subset
-  sub = map %>% filter(mesh %in% terms$CHILD)
-  # return children
-  return(unique(sub$CUI))
-}
+# get_children = function(term) {
+#   library(MeSH.PCR.db)
+#   # get term and children
+#   terms = select(MeSH.PCR.db, keys = term, columns = c("PARENT", "CHILD"), 
+#                  keytype = "PARENT")
+#   # get CUI-MeSH map
+#   map = read.delim("data/disease/phenopedia/CUI-MeSH-map.txt.gz")
+#   # subset
+#   sub = map %>% filter(mesh %in% terms$CHILD)
+#   # return children
+#   return(unique(sub$CUI))
+# }

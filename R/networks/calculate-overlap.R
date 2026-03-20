@@ -19,7 +19,8 @@ if (!dir.exists(input_dir))
   stop("input directory does not exist: ", input_dir)
 
 # create output directory, if it does not exist
-output_dir = "data/networks/overlap"
+# output_dir = "data/networks/overlap"
+output_dir = "resultsR/overlap"
 if (!dir.exists(output_dir))
   dir.create(output_dir, recursive = T)
 

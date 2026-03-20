@@ -1,35 +1,200 @@
-## Evaluating measures of association for single-cell transcriptomics
+# Evaluating Measures of Association for Single-Cell Transcriptomics
 
-This directory contains R code and data required to reproduce and extend the analyses presented in the paper, "Evaluating measures of association for single-cell transcriptomics."
+This repository contains the code and data to reproduce the analyses presented in the paper *"Evaluating measures of association for single-cell transcriptomics."*
 
-### Data preprocessing
+The project benchmarks **17 measures of association** (correlation, distance, and proportionality metrics) across **211 scRNA-seq datasets** to evaluate their utility for coexpression network inference, functional coherence, network overlap with known biology, cell clustering, reproducibility, and disease gene prediction.
 
-The analysis includes 211 single-cell RNA-seq (scRNA-seq) datasets, of which 162 were obtained from the Gene Expression Omnibus (GEO), 10 were obtained from the 10X Genomics [website](https://support.10xgenomics.com/single-cell-gene-expression/datasets), and 39 were obtained from [mousebrain.org](http://mousebrain.org). 
+---
 
-The raw files obtained from the GEO are located in `data/geo/raw`. The raw files obtained from 10xgenomics.com and mousebrain.org are not included in this repository, due to their size. However, processed and filtered files from the 10X Genomics website are provided in `data/10xgenomics/com/processed` and `data/10xgenomics/com/filtered`, respectively. Only filtered files from mousebrain.org are included, in `data/loom/filtered`. 
+## Codebase Structure
 
-GEO files were preprocessed into a common format using the scripts in the `R/geo/preprocessing` folder. These were subsequently filtered to exclude genes that were not detectably expressed in 95% of cells or more, as well as to exclude non-protein-coding genes, using the `R/geo/filter-geo.R` script. The R scripts used to process and filter the other two types of datasets are available in `R/10xgenomics.com` and `R/mousebrain.org`, respectively. 
+```
+SCT-MoA/
+│
+├── main.nf                      # Nextflow pipeline entrypoint (DSL2)
+├── nextflow.config              # Pipeline parameters and profiles
+├── conf/                        # Nextflow profile configs
+│   ├── base.config              #   Default resource limits (CPU, memory, time)
+│   ├── crg.config               #   CRG HPC cluster settings
+│   ├── test.config              #   Test profile
+│   └── trace.config             #   Execution tracing
+│
+├── modules/                     # Nextflow process definitions
+│   ├── coexpr.nf                #   Coexpression matrix generation & filtering
+│   ├── evaluation.nf            #   EGAD (AUROC) & network overlap evaluation
+│   └── network.nf               #   Reference network rewiring
+│
+├── bin/                         # Scripts called by Nextflow processes & other scripts I used
+│   ├── functions.R              #   Shared utilities (gene mapping, species detection)
+│   ├── coexpr/
+│   │   ├── write-matrix.R       #     Compute coexpression matrix (dismay/propr)
+│   │   └── filter-matrix.R      #     Filter genes by expression prevalence
+│   ├── egad/
+│   │   ├── calculate-auroc.R    #     AUROC for GO/Reactome annotations
+│   │   ├── consolidate-auroc.R  #     Merge AUROC results across datasets
+│   │   └── plot-auroc*.R        #     Visualization scripts
+│   └── overlap/
+│       ├── rewire-networks.R    #     Generate 1000 rewired null networks
+│       ├── calculate-overlap.R  #     Compute overlap statistics
+│       ├── consolidate-overlap.R#     Merge overlap results
+│       └── plot-network-overlap*.R #  Visualization scripts
+│
+├── R/                           # Legacy code - from Skinnider
+│   ├── functions.R              #   Shared R utilities
+│   ├── theme.R                  #   ggplot2 theme for publication figures
+│   ├── geo/                     #   GEO data preprocessing & filtering
+│   ├── 10xgenomics.com/         #   10X Genomics data processing
+│   ├── mousebrain.org/          #   mousebrain.org data processing
+│   ├── coexpr/                  #   Standalone coexpression matrix scripts
+│   ├── function/                #   Functional coherence analysis (AUROC)
+│   ├── networks/                #   Network preprocessing, rewiring & overlap
+│   ├── clustering/              #   Cell clustering (hierarchical & SNN/Louvain)
+│   ├── reproducibility/         #   Cross-dataset reproducibility analysis
+│   ├── disease/                 #   Disease gene prediction (Phenopedia)
+│   ├── benchmark/               #   Performance benchmarking
+│   └── tables/                  #   Supplementary table generation
+│
+├── data/
+│   ├── geo/
+│   │   ├── raw/                 #   Raw GEO expression files
+│   │   ├── processed/           #   Standardized format
+│   │   ├── filtered/            #   Gene-filtered matrices
+│   │   └── one-dataset-per-publication.txt  # Consistent random sample
+│   ├── one-per-publication/     #   Main pipeline input (filtered expression data)
+│   ├── 10xgenomics.com/         #   10X Genomics processed/filtered data
+│   ├── loom/                    #   mousebrain.org loom files (filtered)
+│   ├── networks/
+│   │   ├── HIPPIE/              #   Protein-protein interactions
+│   │   ├── OmniPath/            #   Signalling networks
+│   │   ├── Reactome/            #   Metabolic pathway co-membership
+│   │   ├── STRING/              #   Text-mining gene co-occurrence
+│   │   ├── idx                  #   Network index file
+│   │   └── rewired/             #   Generated null models (gitignored)
+│   ├── go/                      #   Gene Ontology annotations
+│   └── orthologs/               #   Human-mouse ortholog mappings
+│
+├── results/                     # Pipeline output (gitignored)
+├── fig/                         # Publication figures
+└── jupyter/                     # Jupyter notebooks
+```
+
+---
+
+## Pipeline Overview
+
+The main analysis runs as a **Nextflow DSL2** pipeline inside a Docker/Singularity container (`suzannejin/dismay:v3.5`). It has three stages:
+
+```
+                     ┌───────────────────────────┐
+                     │   Expression matrices     │
+                     │ data/one-per-publication/ │
+                     └────────────┬──────────────┘
+                                  │
+                                  ▼
+                  ┌──────────────────────────────────┐
+                  │  Step 1: COEXPRESSION MATRICES   │
+                  │  GET_COEXPRESSION_MATRIX         │
+                  │  → dismay: 17 association metrics│
+                  │  FILTER_COEXPRESSION_MATRIX      │
+                  │  → filter by gene prevalence     │
+                  └─────────────┬────────────────────┘
+                                │
+                    ┌───────────┴───────────┐
+                    ▼                       ▼
+    ┌──────────────────────────┐  ┌─────────────────────────────┐
+    │ Step 2: FUNCTIONAL       │  │ Step 3: NETWORK OVERLAP     │
+    │ COHERENCE (EGAD)         │  │                             │
+    │ → AUROC for GO terms     │  │ REWIRE_NETWORK              │
+    │ → AUROC for Reactome     │  │ → 1000 rewired null models  │
+    │                          │  │ CALCULATE_OVERLAP           │
+    │                          │  │ → compare to HIPPIE,        │
+    │                          │  │   OmniPath, Reactome,STRING │
+    └──────────────────────────┘  └─────────────────────────────┘
+```
+
+---
+
+## Running the Pipeline
+
+### Prerequisites
+
+- [Nextflow](https://www.nextflow.io/) (DSL2 compatible)
+- [Docker](https://www.docker.com/) or [Singularity](https://sylabs.io/singularity/)
+
+### Execution
+
+```bash
+# Run with Docker
+nextflow run main.nf -profile docker
+
+# Run with Singularity (HPC environments)
+nextflow run main.nf -profile singularity
+
+# Run on CRG cluster
+nextflow run main.nf -profile singularity,crg
+
+# Resume after interruption
+nextflow run main.nf -profile docker -resume
+```
+
+Before this please run test, for example:
+```bash
+nextflow run main.nf -profile singularity,crg,test
+```
+
+### Configuration
+
+Key parameters in `nextflow.config`:
+
+| Parameter     | Default                                    | Description                              |
+|---------------|--------------------------------------------|------------------------------------------|
+| `input`       | `data/one-per-publication/*.txt.gz`        | Filtered expression matrices             |
+| `methods`     | 5 SJIN variants                            | Association metrics to evaluate           |
+| `network`     | `data/networks/*/{human,mouse}.txt.gz`     | Reference biological networks            |
+| `eval_filt`   | `['main']`                                 | Filtering thresholds (expandable to `[50,60,70,80,90,95,'main']`) |
+| `max_memory`  | 84 GB                                      | Resource ceiling                         |
+| `max_cpus`    | 16                                         | Resource ceiling                         |
+
+---
+
+## Datasets
+
+| Source            | Count | Location                     |
+|-------------------|-------|------------------------------|
+| GEO               | 162   | `data/geo/`                  |
+| 10X Genomics      | 10    | `data/10xgenomics.com/`      |
+| mousebrain.org    | 39    | `data/loom/`                 |
+
+For the main analyses, one dataset per publication is randomly sampled (list in `data/geo/one-dataset-per-publication.txt`) to avoid over-representing studies with many datasets.
+
+---
+
+## Analyses
 
 ### Coexpression network generation
 
-Coexpression networks were generated from filtered gene expression files with seventeen different measures of association as implemented in the `dismay` R package. The script `R/coexpr/write-matrices.R` writes coexpression matrices. These were subsequently filtered to exclude genes absent from 80% of cells or more for the main analyses, as well as at different levels of filtering for two supplementary analyses, using the `R/coexpr/filter-matrices.R` script. The `dismay` R package is available from [GitHub](https://github.com/skinnider/dismay).
+Coexpression matrices are computed using the [`dismay`](https://github.com/skinnider/dismay) R package, which implements 17 association metrics. Genes absent from ≥80% of cells are excluded for the main analysis.
 
-### Functional coherence analysis
+### Functional coherence (EGAD)
 
-The functional coherence of each network was calculated for each GO term using the `R/function/calculate-auroc.R` script. The outputs were subsequently consolidated (`consolidate-auroc.R` for the main analysis and `consolidate-auroc-filtered.R` for the supplementary analyses), and figures and statistical tests were performed in the `R/function/plot-auroc*` scripts. The contribution of different experimental and analytical factors to functional coherence was assessed with univariate linear models in the `R/function/analyze-r2.R` script. For the most part, our analysis focused on one randomly sampled dataset from each publication except where noted otherwise in the paper, and this random sample was held consistent for all analyses; it is provided in `data/geo/one-dataset-per-publication.txt`. 
+Evaluates whether coexpression networks recover known functional relationships using AUROC scores for Gene Ontology and Reactome annotations via the [`EGAD`](https://bioconductor.org/packages/EGAD/) package.
 
-### Network overlap analysis
+### Network overlap
 
-Four different types of biological networks were analyzed: protein-protein interactions from [HIPPIE](http://cbdm-01.zdv.uni-mainz.de/~mschaefer/hippie/information.php), signalling networks from [OmniPath](http://omnipathdb.org/), metabolic pathway co-membership networks from [Reactome](https://reactome.org/), and gene co-occurrence networks derived from text mining from [STRING](https://string-db.org/). All four are provided in their respective directories within `data/networks` with preprocessing code provided in `R/networks/rewire-*`. To provide a null model for the observed overlap, each network was rewired 1,000 times using the `R/networks/rewire-networks.R` script; because of the size of these files, they are not included in the repository. The observed overlap was compared to random expectation using the script `R/networks/calculate-overlap.R`, and visualized using `R/networks/plot-network-overlap.R`. 
+Compares coexpression networks against four types of biological reference networks. Each reference is rewired 1,000 times to establish a null distribution.
 
-### Cell clustering analysis
+| Network   | Type                            | Source |
+|-----------|---------------------------------|--------|
+| HIPPIE    | Protein-protein interactions    | [HIPPIE](http://cbdm-01.zdv.uni-mainz.de/~mschaefer/hippie/) |
+| OmniPath  | Signalling networks             | [OmniPath](http://omnipathdb.org/) |
+| Reactome  | Metabolic pathway co-membership | [Reactome](https://reactome.org/) |
+| STRING    | Text-mining co-occurrence       | [STRING](https://string-db.org/) |
 
-Cell clustering with each of the 17 measures of association was analyzed for the [Li et al.](https://www.nature.com/articles/ng.3818) dataset, using two different algorithms (hierarchical clustering and Louvain clustering of the shared-nearest-neighbor graph). The cell-cell matrices was generated with `R/clustering/write-cell-matrices.R` and the principal analysis was performed using `R/clustering/analyze-hclust.R` and `R/clustering/analyze-snn.R`, respectively. The dendrograms obtained by hierarchical clustering with each method were also plotted with both the cell line of origin and batch in the script `R/clustering/plot-dendrograms.R`. 
 
-### Reproducibility analysis
+### Plotting & analysis
 
-To analyze the reproducibility of coexpression networks inferred with each measure of association we made use of five scRNA-seq datasets of human pancreatic alpha, beta, and delta cells, (all of which were obtained from the GEO and are in `data/geo/filtered` directory). We considered all 30 combinations of each cell type across five datasets. For each pair of datasets, we filtered both coexpression matrices to the intersect of the genes present in either network, then calculated the Spearman correlation between the two matrices. To assess statistical significance, we subsequently permuted the matrices 100 times, following the permutation procedure of the Mantel test. We then obtained the z score of the observed Spearman correlation relative to random expectation, and visualized the results in `R/reproducibility/plot-reproducibility.R`. 
+You can use the other scripts in `bin` to analyze/plot the results of the pipeline.
 
-### Disease gene analysis
+## Dependencies
 
-We analyzed disease gene prediction for CNS-related disorders and cell type-specific coexpression of genes associated with cerebrovascular disease; both lists of disease genes were obtained from [Phenopedia](https://phgkb.cdc.gov/PHGKB/startPagePhenoPedia.action), and preprocessed using the scripts `R/disease/preprocess-phenopedia.R` and `R/disease/create-mesh-map.R`. We subsequently used the same framework as in the functional coherence analysis (reimplemented in `R/disease/analyze-auroc-disease.R`) to analyze disease gene coexpression in each case, visualizing the results with the script `R/disease/plot-auroc-disease.R`. 
+All dependencies are pre-installed in the container image `suzannejin/dismay:v3.5`.

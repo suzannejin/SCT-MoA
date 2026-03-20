@@ -1,7 +1,6 @@
 # Construct gene correlation matrix for a given dataset and measure
 library(methods)
 library(dismay)
-library(propr)
 
 # usage: write-matrix.R <input> <output> <method>
 args = commandArgs(trailingOnly = T)
@@ -21,7 +20,17 @@ message("  calculating ", coef, " matrix ...")
 if (coef %in% dismay::metrics()){
     coexpr = dismay::dismay(dat, metric = coef)
 }else if( grepl("CLR", coef) ){
+    library(propr)
     coef = stringr::str_replace(coef, "CLR", "")
+    packageVersion("propr")
+    print(coef)
+    pro = propr(dat, metric=coef, p=0) 
+    coexpr = pro@matrix
+}else if( grepl("SJIN", coef) ){
+    library(propr, lib.loc=paste0(.libPaths()[1], "/propr_sjin"))
+    coef = stringr::str_replace(coef, "SJIN", "")
+    packageVersion("propr")
+    print(coef)
     pro = propr(dat, metric=coef, p=0) 
     coexpr = pro@matrix
 }

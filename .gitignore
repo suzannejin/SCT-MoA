@@ -6,7 +6,6 @@
 .project
 .classpath
 /build/
-/bin/
 /target/
 
 # Rstudio
@@ -27,5 +26,9 @@ work/
 .nextflow.log*
 
 # results
-results/
-tests/
+results*/
+tests*/
+test/
+
+# other
+jupyter/

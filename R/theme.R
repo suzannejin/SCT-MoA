@@ -14,20 +14,20 @@ library(patchwork)
 
 # Define theme
 theme_sc = theme_bw() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
-        axis.text.y = element_text(size = 6),
-        axis.title.x = element_text(size = 8),
-        axis.title.y = element_text(size = 8),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6*3),
+        axis.text.y = element_text(size = 6*3),
+        axis.title.x = element_text(size = 8*3),
+        axis.title.y = element_text(size = 8*3),
         panel.grid = element_blank(),
         panel.border = element_blank(), 
         axis.line.y = element_line(colour = "grey50"),
         axis.line.x = element_line(colour = "grey50"), 
         axis.ticks = element_line(colour="grey50"),
         legend.position = "top",
-        legend.text = element_text(size = 6),
-        legend.title = element_text(size = 6),
+        legend.text = element_text(size = 6*3),
+        legend.title = element_text(size = 6*3),
         legend.key.size = unit(0.4, "cm"),
-        plot.title = element_text(size = 10, hjust = 0.5))
+        plot.title = element_text(size = 10*3, hjust = 0.5))
 
 clean_theme = theme_bw() + 
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5, size = 8),
